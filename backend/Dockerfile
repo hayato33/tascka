@@ -13,5 +13,10 @@ RUN uv sync --frozen --no-dev
 # アプリケーションコードをコピー
 COPY . .
 
+# 非rootユーザーを作成（セキュリティベストプラクティス）
+RUN adduser --disabled-password --gecos "" --uid 1000 appuser && \
+    chown -R appuser:appuser /app
+USER appuser
+
 # Alembicマイグレーション実行後にuvicornで起動
 CMD ["sh", "-c", "uv run alembic upgrade head && uv run uvicorn app.main:app --host 0.0.0.0 --port 8000"]

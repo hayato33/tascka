@@ -28,12 +28,16 @@ export async function apiFetch<T>(
 ): Promise<T> {
   const url = `${API_BASE_URL}${path}`;
 
+  // options を先にスプレッドし、headers を後からマージする。
+  // これにより、呼び出し元が指定した method や body が正しく適用され、
+  // かつ headers も上書きではなくマージされる。
+  const { headers: optionHeaders, ...restOptions } = options ?? {};
   const response = await fetch(url, {
+    ...restOptions,
     headers: {
       "Content-Type": "application/json",
-      ...options?.headers,
+      ...optionHeaders,
     },
-    ...options,
   });
 
   // response.ok は HTTP ステータスコードが 200-299 の場合に true。

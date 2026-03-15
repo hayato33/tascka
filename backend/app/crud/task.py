@@ -62,7 +62,7 @@ async def get_tasks(
     # offset = (page - 1) * per_page で、指定ページの先頭位置を計算する。
     query = (
         query.options(selectinload(Task.tags))
-        .order_by(Task.created_at.desc())
+        .order_by(Task.created_at.desc(), Task.id.desc())
         .offset((page - 1) * per_page)
         .limit(per_page)
     )

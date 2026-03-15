@@ -10,14 +10,20 @@ Pythonの型ヒントを活用した Mapped[] による定義が推奨されて�
 - mapped_column() は Column() の後継で、型ヒントと連携する
 """
 
+from __future__ import annotations
+
 import enum
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
+
+if TYPE_CHECKING:
+    from app.models.tag import Tag
 
 
 class TaskStatus(str, enum.Enum):

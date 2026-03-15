@@ -25,6 +25,7 @@ export function TaskFilter() {
     <div className="flex gap-2">
       {STATUS_OPTIONS.map((option) => (
         <button
+          type="button"
           key={option.value ?? "all"}
           onClick={() => setStatus(option.value)}
           className={`rounded-md px-3 py-1.5 text-sm font-medium ${

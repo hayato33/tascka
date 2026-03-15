@@ -7,6 +7,8 @@
 - services層を用意しておくことで、routes層を変更せずにロジックを追加できる。
 """
 
+from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud import tag as tag_crud
@@ -32,4 +34,10 @@ async def create_tag(db: AsyncSession, tag_in: TagCreate) -> Tag:
     ビジネスロジックの一部であり、crud層の責務ではない。
     """
     tag = Tag(**tag_in.model_dump())
-    return await tag_crud.create_tag(db, tag)
+    try:
+        return await tag_crud.create_tag(db, tag)
+    except IntegrityError:
+        await db.rollback()
+        raise HTTPException(
+            status_code=409, detail="Tag with this name already exists"
+        )

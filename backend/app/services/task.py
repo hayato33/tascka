@@ -23,6 +23,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud import tag as tag_crud
 from app.crud import task as task_crud
+from app.models.tag import Tag
 from app.models.task import Task, TaskStatus
 from app.schemas.task import TaskCreate, TaskUpdate
 
@@ -61,17 +62,20 @@ async def get_task(db: AsyncSession, task_id: uuid.UUID) -> Task:
 
 async def _validate_and_get_tags(
     db: AsyncSession, tag_ids: list[uuid.UUID]
-) -> list:
+) -> list[Tag]:
     """タグIDのリストからタグを取得し、すべてのIDが存在することを検証する。
 
     存在しないタグIDが含まれている場合は400エラーを返す。
     create_task と update_task の両方で使われる共通バリデーション。
     """
-    tags = await tag_crud.get_tags_by_ids(db, tag_ids)
-    if len(tags) != len(tag_ids):
+    # 重複を除去して検証（IN句はユニークな結果を返すため、
+    # 重複があると件数不一致で誤検知してしまう）
+    unique_tag_ids = list(set(tag_ids))
+    tags = await tag_crud.get_tags_by_ids(db, unique_tag_ids)
+    if len(tags) != len(unique_tag_ids):
         # 存在しなかったIDを特定してエラーメッセージに含める。
         found_ids = {tag.id for tag in tags}
-        missing_ids = [str(tid) for tid in tag_ids if tid not in found_ids]
+        missing_ids = [str(tid) for tid in unique_tag_ids if tid not in found_ids]
         raise HTTPException(
             status_code=400,
             detail=f"Tags not found: {', '.join(missing_ids)}",

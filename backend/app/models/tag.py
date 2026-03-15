@@ -8,12 +8,18 @@
 関連を管理する。ビジネスロジック上の属性は持たない。
 """
 
+from __future__ import annotations
+
 import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Column, ForeignKey, String, Table
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
+
+if TYPE_CHECKING:
+    from app.models.task import Task
 
 # 中間テーブルの定義。
 # 独自のモデルクラスを作らず、Table() で直接テーブルを定義する。

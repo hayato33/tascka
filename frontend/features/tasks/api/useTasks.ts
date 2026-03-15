@@ -63,10 +63,11 @@ export function useTasks(params?: {
   per_page?: number;
 }) {
   const searchParams = new URLSearchParams();
-  if (params?.status) searchParams.set("status", params.status);
-  if (params?.tag) searchParams.set("tag", params.tag);
-  if (params?.page) searchParams.set("page", String(params.page));
-  if (params?.per_page) searchParams.set("per_page", String(params.per_page));
+  if (params?.status != null) searchParams.set("status", params.status);
+  if (params?.tag != null) searchParams.set("tag", params.tag);
+  if (params?.page != null) searchParams.set("page", String(params.page));
+  if (params?.per_page != null)
+    searchParams.set("per_page", String(params.per_page));
 
   const queryString = searchParams.toString();
   const path = `/api/tasks${queryString ? `?${queryString}` : ""}`;

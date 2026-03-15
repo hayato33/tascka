@@ -75,7 +75,7 @@ make test        # pytest
 
 ### Backend 3層構成
 
-```
+```text
 routes/   → リクエスト受付・レスポンス返却        (Presentation層)
 services/ → ビジネスロジック・複数crud操作の組合せ  (Business層)
 crud/     → DB操作ロジック                       (Data層)
@@ -85,7 +85,7 @@ crud/     → DB操作ロジック                       (Data層)
 
 ### Frontend features構成
 
-```
+```text
 features/{機能名}/
   ├── api/          # TanStack Query Hooks
   ├── components/   # UIコンポーネント

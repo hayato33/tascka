@@ -38,7 +38,8 @@ class Settings(BaseSettings):
     sql_echo: bool = False
 
     # CORSで許可するオリジンのリスト。
-    # カンマ区切りの文字列を受け取り、リストに変換する。
+    # pydantic-settingsはlist[str]をJSON配列形式で期待する。
+    # 例: CORS_ORIGINS='["http://localhost:3000","http://example.com"]'
     # 開発環境ではNext.jsの開発サーバー (http://localhost:3000) を許可する。
     cors_origins: list[str] = ["http://localhost:3000"]
 

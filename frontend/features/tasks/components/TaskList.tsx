@@ -8,10 +8,14 @@
 "use client";
 
 import { useTasks } from "../api/useTasks";
+import { useTaskFilterStore } from "../stores/taskFilterStore";
 import { TaskCard } from "./TaskCard";
 
 export function TaskList() {
-  const { data, isLoading, error } = useTasks();
+  const { status } = useTaskFilterStore();
+  const { data, isLoading, error } = useTasks({
+    status: status ?? undefined,
+  });
 
   if (isLoading) {
     return <div className="text-gray-500">読み込み中...</div>;
