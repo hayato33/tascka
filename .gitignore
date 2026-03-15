@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Environment
+.env
+.env.local
+.envrc
+
+# Python
+*.egg-info/
+dist/
+.venv/
+.uv/
+
+# Next.js
+.next/
+out/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Generated
+frontend/types/api.d.ts
+
+# Podman
+postgres_data/
