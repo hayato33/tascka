@@ -1,0 +1,10 @@
+# direnv用の環境変数設定
+# このファイルを .envrc にコピーして使う:
+#   cp .envrc.example .envrc && direnv allow
+
+# Backend
+export DATABASE_URL="postgresql+asyncpg://user:password@localhost:5432/taskdb"
+export CORS_ORIGINS="http://localhost:3000"
+
+# Frontend
+export NEXT_PUBLIC_API_URL="http://localhost:8000"
