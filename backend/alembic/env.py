@@ -26,7 +26,11 @@ if config.config_file_name is not None:
 
 # alembic.ini の sqlalchemy.url を動的に上書きする。
 # これにより、環境変数で接続先を切り替えられる。
-config.set_main_option("sqlalchemy.url", settings.database_url)
+# replace("%", "%%") が必要な理由:
+# AlembicはPythonのConfigParserを使っており、% を補間構文（例: %(here)s）として
+# 解釈する。URLに %xx 形式のパーセントエンコーディングが含まれる場合、
+# %% にエスケープしないと "invalid interpolation syntax" エラーになる。
+config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
 
 # SQLAlchemyのモデル定義を読み込む。
 # models/__init__.py ですべてのモデルをインポートしているため、

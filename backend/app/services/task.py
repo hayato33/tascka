@@ -118,6 +118,16 @@ async def update_task(
     # これにより、PATCHリクエストで「送られたフィールドだけ更新」が実現できる。
     update_data = task_in.model_dump(exclude_unset=True, exclude={"tag_ids"})
 
+    # title と status は NOT NULL カラムのため、null での更新を禁止する。
+    # PATCH {"title": null} が通ると IntegrityError で500になってしまうため、
+    # services層で422に落とす。
+    for field in ("title", "status"):
+        if field in update_data and update_data[field] is None:
+            raise HTTPException(
+                status_code=422,
+                detail=f"{field} cannot be null",
+            )
+
     # タグIDが明示的に送られた場合のみタグを更新する。
     # 存在しないIDが含まれていれば400エラーになる。
     if task_in.tag_ids is not None:
