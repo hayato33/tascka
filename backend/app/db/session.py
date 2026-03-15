@@ -18,10 +18,19 @@ from app.core.config import settings
 
 # create_async_engine() で非同期用のエンジンを生成する。
 # エンジンはDB接続プールを管理し、アプリ全体で1つだけ生成する。
-# echo=True にするとSQLAlchemyが発行するSQLをログに出力する（開発時のデバッグ用）。
+#
+# echo: SQLAlchemyが発行するSQLをログに出力するかどうか。環境変数で切り替え可能。
+# pool_pre_ping: 接続を使う前にDBへの疎通確認（SELECT 1）を行う。
+#   DBが再起動された等で接続が切れていた場合、自動的に再接続してくれる。
+#   本番環境で接続エラーを防ぐために重要。
+# pool_size: コネクションプールに保持する接続数。デフォルトは5。
+# max_overflow: pool_size を超えた場合に一時的に追加できる接続数。
 engine = create_async_engine(
     settings.database_url,
-    echo=True,
+    echo=settings.sql_echo,
+    pool_pre_ping=True,
+    pool_size=5,
+    max_overflow=10,
 )
 
 # async_sessionmaker は、AsyncSession のファクトリ（生成器）。

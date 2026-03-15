@@ -59,6 +59,26 @@ async def get_task(db: AsyncSession, task_id: uuid.UUID) -> Task:
     return task
 
 
+async def _validate_and_get_tags(
+    db: AsyncSession, tag_ids: list[uuid.UUID]
+) -> list:
+    """タグIDのリストからタグを取得し、すべてのIDが存在することを検証する。
+
+    存在しないタグIDが含まれている場合は400エラーを返す。
+    create_task と update_task の両方で使われる共通バリデーション。
+    """
+    tags = await tag_crud.get_tags_by_ids(db, tag_ids)
+    if len(tags) != len(tag_ids):
+        # 存在しなかったIDを特定してエラーメッセージに含める。
+        found_ids = {tag.id for tag in tags}
+        missing_ids = [str(tid) for tid in tag_ids if tid not in found_ids]
+        raise HTTPException(
+            status_code=400,
+            detail=f"Tags not found: {', '.join(missing_ids)}",
+        )
+    return tags
+
+
 async def create_task(db: AsyncSession, task_in: TaskCreate) -> Task:
     """タスクを作成し、タグを紐付ける。
 
@@ -72,9 +92,9 @@ async def create_task(db: AsyncSession, task_in: TaskCreate) -> Task:
     task = Task(**task_in.model_dump(exclude={"tag_ids"}))
 
     # タグIDが指定されている場合、タグを取得して紐付ける。
+    # 存在しないIDが含まれていれば400エラーになる。
     if task_in.tag_ids:
-        tags = await tag_crud.get_tags_by_ids(db, task_in.tag_ids)
-        task.tags = tags
+        task.tags = await _validate_and_get_tags(db, task_in.tag_ids)
 
     return await task_crud.create_task(db, task)
 
@@ -95,9 +115,9 @@ async def update_task(
     update_data = task_in.model_dump(exclude_unset=True, exclude={"tag_ids"})
 
     # タグIDが明示的に送られた場合のみタグを更新する。
+    # 存在しないIDが含まれていれば400エラーになる。
     if task_in.tag_ids is not None:
-        tags = await tag_crud.get_tags_by_ids(db, task_in.tag_ids)
-        task.tags = tags
+        task.tags = await _validate_and_get_tags(db, task_in.tag_ids)
 
     return await task_crud.update_task(db, task, update_data)
 

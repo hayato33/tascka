@@ -33,6 +33,10 @@ class Settings(BaseSettings):
     # asyncpgドライバを使うため、URLは "postgresql+asyncpg://..." の形式にする。
     database_url: str = "postgresql+asyncpg://user:password@localhost:5432/taskdb"
 
+    # SQLAlchemyが発行するSQLをログに出力するかどうか。
+    # 開発環境ではTrue、本番環境ではFalseにする。
+    sql_echo: bool = False
+
     # CORSで許可するオリジンのリスト。
     # カンマ区切りの文字列を受け取り、リストに変換する。
     # 開発環境ではNext.jsの開発サーバー (http://localhost:3000) を許可する。

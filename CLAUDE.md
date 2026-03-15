@@ -67,6 +67,10 @@ features/{feature}/types/      → openapi-typescriptで生成した型のre-exp
 - フィルター条件（ステータス・タグ）は nuqs でURLクエリと同期
 - fetch の 4xx/5xx ハンドリングは `frontend/lib/api.ts` の共通関数で行う
 
+### インポートパス規約
+- **同一feature内**（features/tasks/api → features/tasks/types 等）: 相対パス（`./`, `../`）を使う
+- **feature間・feature外**（features/tasks → lib/api 等）: `@/` エイリアスを使う
+
 ## Coding Conventions
 
 ### Backend コメントポリシー

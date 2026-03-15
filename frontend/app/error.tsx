@@ -24,7 +24,14 @@ export default function Error({
       <h2 className="text-xl font-semibold text-red-600">
         エラーが発生しました
       </h2>
-      <p className="text-gray-600">{error.message}</p>
+      <p className="text-gray-600">
+        予期しないエラーが発生しました。
+        {error.digest && (
+          <span className="block text-sm text-gray-400">
+            エラーID: {error.digest}
+          </span>
+        )}
+      </p>
       <button
         onClick={reset}
         className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
